@@ -20,6 +20,16 @@ The sys package provides access to the arguments given to Lily.</p></div>
 <div class='doc'><p>
 Search the environment for <code>name</code>, returning either a <code>Some</code> with the contents,
 or <code>None</code>. Internally, this is a wrapper over C&#39;s getenv.</p></div>
+<h3 id='function.recursion_limit'><code>define <a href='#function.recursion_limit'>recursion_limit</a>: Integer</code></h3>
+<div class='doc'><p>
+Return the current recursion limit.</p></div>
+<h3 id='function.set_recursion_limit'><code>define <a href='#function.set_recursion_limit'>set_recursion_limit</a>(limit: Integer)</code></h3>
+<div class='doc'><p>
+Attempt to set <code>limit</code> as the maximum recursion limit.</p>
+<div class='linkblock' id='errors.function.set_recursion_limit'><a href='#errors.function.set_recursion_limit'>Errors</a></div>
+<ul>
+<li><code>ValueError</code> if <code>limit</code> is lower than the current recursion depth, or an</li>
+</ul></div>
 <h2>Vars</h2>
 <h3 id='var.argv'><code>var <a href='#var.argv'>argv</a>: List[String]</code></h3>
 <div class='doc'><p>

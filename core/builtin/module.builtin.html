@@ -125,12 +125,6 @@ Examples of that include a database query or a more humble rpn calculator.</td>
 <h2>Exceptions</h2>
 <table><tbody>
 <tr>
-<td><a class='reflink' href='class.AssertionError.html'>AssertionError</a></td>
-<td>
-This is a subclass of <code>Exception</code> that is raised when an <code>assert</code> is passed
-<code>false</code> as the first argument.</td>
-</tr>
-<tr>
 <td><a class='reflink' href='class.DivisionByZeroError.html'>DivisionByZeroError</a></td>
 <td>
 The <code>DivisionByZeroError</code> is a subclass of <code>Exception</code> that is raised when
@@ -187,9 +181,6 @@ Write <code>value</code> to <code>stdout</code>, plus a newline (<code>&quot;\n&
 <h3 id='function.calltrace'><code>define <a href='#function.calltrace'>calltrace</a>: List[String]</code></h3>
 <div class='doc'><p>
 Returns a <code>List</code> with one <code>String</code> for each function that is currently entered.</p></div>
-<h3 id='function.assert'><code>define <a href='#function.assert'>assert</a>(condition: Boolean, message: *String = "")</code></h3>
-<div class='doc'><p>
-If <code>condition</code> is <code>false</code>, raise <code>AssertionError</code> using <code>message</code>.</p></div>
 <h2>Vars</h2>
 <h3 id='var.stdin'><code>var <a href='#var.stdin'>stdin</a>: File</code></h3>
 <div class='doc'><p>
