@@ -216,10 +216,6 @@ table {
 
 /*# sourceMappingURL=bootstrap.min.css.map */
 
-#main {
-    margin-left: 40px;
-}
-
 code {
     background-color: #f5f5f5;
     color: black;
@@ -255,4 +251,18 @@ h3 code {
 
 h3 code i {
     color: green;
+}
+
+body {
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+
+.sidebar-nav li a {
+    padding: 2px;
+    margin-left: 10px;
+}
+
+.sidebar-nav .active a {
+    text-decoration: underline;
 }

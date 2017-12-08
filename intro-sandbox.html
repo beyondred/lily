@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Sandbox - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet"> 
+        <link href="css/codemirror.css" rel="stylesheet">
+        <link href="css/sandbox.css" rel="stylesheet">
+
+        <script async src="js/lily_sandbox.js" type="text/javascript"></script>
+        <script src="js/codemirror.js"></script>
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document" onload="ready();">
+        <div id="exampleroot" style="display:none">
+<div class="example" id="Hello World">
+print("Hello World!")
+</div>
+<div class="example" id="100 doors">
+var doors = List.repeat(100, false)
+
+for i in 0...99:
+    for j in i...99 by i + 1:
+        doors[j] = !doors[j]
+
+# The type must be specified since the List starts off empty.
+var open_doors: List[Integer] = []
+
+doors.each_index(|i|
+    if doors[i]:
+        open_doors.push(i + 1)
+)
+
+print("Open doors: {0}.".format(open_doors))
+</div>
+<div class="example" id="Show off enums">
+enum TreeObject {
+    TreeValue(String),
+    TreeList(TreeObject...)
+
+    define as_string: String {
+        match self: {
+            case TreeValue(v):
+                return v
+
+            case TreeList(l):
+                var result = "["
+                var size = l.size() - 1
+
+                for i in 0...size: {
+                    result = "{0}{1}".format(result, l[i].as_string())
+                    if i != size:
+                        result = result ++ " "
+                }
+
+                return result ++ "]"
+        }
+    }
+}
+
+stdout.write("Here's a JSON-like enum value as a string: ")
+print(
+        TreeList(
+            TreeList(
+                TreeValue("abc"),
+                TreeValue("def")
+            ),
+            TreeValue("1"), 
+            TreeValue("2"),
+            TreeList(
+                TreeList(
+                    TreeValue("0")
+                )
+            )
+        ).as_string()
+    )
+</div>
+<div class="example" id="RPN Calculator">
+var math_ops = ["+" =&gt; (|a: Integer, b: Integer| a + b),
+                "-" =&gt; (|a, b| a - b),
+                "*" =&gt; (|a, b| a * b),
+                "/" =&gt; (|a, b| a / b)]
+
+define rpn(input: String): Result[String, List[Integer]]
+{
+    var values = input.split(" ").reject(|r| r.is_space() )
+    var stack: List[Integer] = []
+
+    for i in 0...values.size() - 1: {
+        var v = values[i]
+        match v.parse_i(): {
+            case Some(number):
+                stack.push(number)
+            case None:
+                if stack.size() &lt; 2:
+                    return Failure("Stack underflow.")
+
+                var right = stack.pop()
+                var left = stack.pop()
+                try: {
+                    var op_fn = math_ops[v]
+                    var op_value = op_fn(left, right)
+                    stack.push(op_value)
+                except KeyError:
+                    return Failure("Invalid operation {0}.".format(v))
+                except DivisionByZeroError:
+                    return Failure("Attempt to divide by zero.")
+                }
+        }
+    }
+
+    return Success(stack)
+}
+
+var lines = [
+    "1 2 3 4 * + -",
+    "2 2 2 2 * *",
+    "*",
+    "1 2 ?"
+    ]
+
+lines.each(|l| print("{0}: {1}".format(l, rpn(l)) ) )
+</div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="sidebar-nav">
+                        <div class="well">
+                            <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li class="active"><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div id="editorbox">
+                        <div>
+                            <select id="selectexample" onchange="updatecontent()">
+                            </select>
+                        </div>
+                        <br>
+            
+                        <div id="editor"></div>
+                        <button class="runbutton" type="button" onclick="execute()">Execute</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-9">
+                    <span>Output</span>
+                    <br />
+                    <textarea id="results" rows="8" disabled="1"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/prep_sandbox.js"></script>
+    </body>
+</html>

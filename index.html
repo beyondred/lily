@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Welcome - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li class="active"><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>Lily is a programming language that's been under development for
+several years. Lily is <strong>statically-typed</strong>, with an interpreter as a reference.
+Lily uses <strong>reference counting</strong> for memory management with <strong>garbage
+collection</strong> as a fallback.</p>
+<p>Key features of Lily:</p>
+<ul>
+<li>Built-in template mode</li>
+<li>Embed/extend in C</li>
+<li>Single-inheritance classes</li>
+<li>Exceptions</li>
+<li>Generics</li>
+<li>Abstract data types (with <code>Option</code> and <code>Result</code> predefined).</li>
+</ul>
+<p>Here's a small example showing most of Lily's features:</p>
+<pre><code>var math_ops = [&quot;+&quot; =&gt; (|a: Integer, b: Integer| a + b),
+                &quot;-&quot; =&gt; (|a, b| a - b),
+                &quot;*&quot; =&gt; (|a, b| a * b),
+                &quot;/&quot; =&gt; (|a, b| a / b)]
+
+define rpn(input: String): Result[String, List[Integer]]
+{
+    var values = input.split(&quot; &quot;).reject(|r| r.is_space() )
+    var stack: List[Integer] = []
+
+    for i in 0...values.size() - 1: {
+        var v = values[i]
+        match v.parse_i(): {
+            case Some(number):
+                stack.push(number)
+            case None:
+                if stack.size() &lt; 2:
+                    return Failure(&quot;Stack underflow.&quot;)
+
+                var right = stack.pop()
+                var left = stack.pop()
+                try: {
+                    var op_fn = math_ops[v]
+                    var op_value = op_fn(left, right)
+                    stack.push(op_value)
+                except KeyError:
+                    return Failure(&quot;Invalid operation {0}.&quot;.format(v))
+                except DivisionByZeroError:
+                    return Failure(&quot;Attempt to divide by zero.&quot;)
+                }
+        }
+    }
+
+    return Success(stack)
+}
+
+var lines = [
+    &quot;1 2 3 4 * + -&quot;,
+    &quot;2 2 2 2 * *&quot;,
+    &quot;*&quot;,
+    &quot;1 2 ?&quot;
+    ]
+
+lines.each(|l| print(&quot;{0}: {1}&quot;.format(l, rpn(l)) ) )
+
+# Result:
+# 1 2 3 4 * + -: Success([-13])
+# 2 2 2 2 * *: Success([2, 8])
+# *: Failure(&quot;Stack underflow.&quot;)
+# 1 2 ?: Failure(&quot;Invalid operation ?.&quot;)
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>
