@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Basics - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li class="active"><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h3 id='declarations'>Declarations</h3>
+<p>Variables must be declared before they are used, with the <code>var</code> keyword:</p>
+<pre><code>var a_number = 10
+var my_double = 5.55, some_string = &quot;Hello&quot;
+var number_list = [1, 2, 3]
+</code></pre>
+
+<p>The value used to initialize a var determines the type of the var. In most
+cases, <code>var</code> does not need extra type information. However, sometimes the right
+side of an initialization doesn't provide enough info and type information must
+be provided:</p>
+<pre><code>var string_list: List[String] = []
+</code></pre>
+
+<h3 id='literals'>Literals</h3>
+<p>Lily comes with several predefined classes, and syntax for using them as well.</p>
+<h4 id='boolean'>Boolean</h4>
+<p>Either <code>true</code> or <code>false</code>.</p>
+<h4 id='byte'>Byte</h4>
+<p>A numeric value from 0 to 255 (inclusive). Can be declared like an <code>Integer</code> but
+with a suffix of <code>t</code>, or like a <code>String</code> using a single character or escape
+sequence between single quote marks:</p>
+<pre><code>0t
+0xFFt
+255t
+'a'
+'\t'
+</code></pre>
+
+<h4 id='bytestring'>ByteString</h4>
+<p>An array of <code>Byte</code> values. A <code>String</code>, but with no guarantees about embedded
+<code>\0</code> values or utf-8. Allows any escape character between quotes:</p>
+<pre><code>B&quot;123456&quot;
+B&quot;\0\1\2&quot;
+B&quot;\255\254\t&quot;
+B&quot;&quot;&quot;A \
+    multi-line \
+    ByteString&quot;&quot;&quot;
+</code></pre>
+
+<p>The backslash-newline escape sequence lets the interpreter know to omit the
+newline of the current line and the leading whitespace (spaces and tabs) of the
+next line.</p>
+<h4 id='double'>Double</h4>
+<p>Represents either very large or very small values:</p>
+<pre><code>0.00000005
+-1.7
+10e1
+5e-5
+</code></pre>
+
+<h4 id='hash'>Hash</h4>
+<p>A <code>Hash</code> is a key to value mapping. Only <code>Integer</code> and <code>String</code> can be used for
+the key. The value can be anything, so long as there is a consistent type. If a
+<code>Hash</code> literal contains the same key twice, both values will still be computed
+if necessary, but the right-most key 'wins':</p>
+<pre><code>var string_to_integer_map = [&quot;abc&quot; =&gt; 1, &quot;def&quot; =&gt; 2, &quot;ghi&quot; = 3]
+
+var empty_string_double_hash: Hash[String, Double] = []
+</code></pre>
+
+<h4 id='integer'>Integer</h4>
+<p>A 64-bit signed value that can be represented using different bases:</p>
+<pre><code>12345
+-67890
+0c744
+x0xFF
+0b101010101
+</code></pre>
+
+<h4 id='list'>List</h4>
+<p>A <code>List</code> is composed of values put together in brackets. The values must have
+some common underlying type:</p>
+<pre><code>var integer_list = [1, 2, 3]
+
+var empty_boolean_list: List[Boolean] = []
+</code></pre>
+
+<h4 id='string'>String</h4>
+<p>Represents a block of text. <code>String</code> carries the guarantee that all instances
+are valid utf-8, and that they do not carry <code>\0</code> characters inside. <code>String</code>
+literals are single-line by default, but can be multi-line as well:</p>
+<pre><code>var message = &quot;Hello&quot;
+
+var multi_line = &quot;&quot;&quot;Hello \
+                    there&quot;&quot;&quot;
+</code></pre>
+
+<p>The backslash-newline escape sequence lets the interpreter know to omit the
+newline of the current line and the leading whitespace (spaces and tabs) of the
+next line.</p>
+<h4 id='tuple'>Tuple</h4>
+<p>A <code>Tuple</code> is similar to a <code>List</code>, except that <code>Tuple</code>s have a fixed size, but
+can types that don't have any similarity to each other. A <code>Tuple</code> begins with
+<code>&lt;[</code> and ends with <code>]&gt;</code>:</p>
+<pre><code>var record = &lt;[1, &quot;abc&quot;, [2]]&gt;
+
+var t: Tuple[String, Integer] = &lt;[&quot;asdf&quot;, 123]&gt;
+</code></pre>
+
+<h3 id='keywords'>Keywords</h3>
+<p>The following keywords have special meaning:</p>
+<pre><code>break case class continue define do elif else enum except false __file__ for
+forward __function__ if import __line__ match private protected public raise
+return scoped self static true try unit var while
+</code></pre>
+
+<p>Some of these keywords are 'magic', in that they are replaced with a literal
+when they are used:</p>
+<ul>
+<li><code>__file__</code>: The path to the current file.</li>
+<li><code>__line__</code>: The current line number.</li>
+<li><code>__function__</code>: The name of the current function.</li>
+</ul>
+<h3 id='comments'>Comments</h3>
+<p>Lily supports two kinds of comments:</p>
+<pre><code># This is a single-line comment
+
+#[ This
+   is
+   a
+   block
+   comment ]#
+</code></pre>
+
+<h3 id='escape-codes'>Escape Codes</h3>
+<p><code>String</code>, <code>ByteString</code>, and <code>Byte</code> support the following escape sequences:</p>
+<ul>
+<li>
+<p><code>\a</code>: Terminal bell</p>
+</li>
+<li>
+<p><code>\b</code>: Terminal backspace</p>
+</li>
+<li>
+<p><code>\t</code>: Tab</p>
+</li>
+<li>
+<p><code>\n</code>: A newline</p>
+</li>
+<li>
+<p><code>\r</code>: Carriage return</p>
+</li>
+<li>
+<p><code>\"</code>: The <code>"</code> character</p>
+</li>
+<li>
+<p><code>\'</code>: The <code>'</code> character</p>
+</li>
+<li>
+<p><code>\\</code>: The <code>\</code> character</p>
+</li>
+<li>
+<p><code>\/</code>: <code>\</code> on Windows, <code>/</code> elsewhere.</p>
+</li>
+<li>
+<p><code>\nnn</code>: 'nnn' is up to 3 digits, scanned in decimal. This can yield any value
+           between 0 and 255 inclusive. Scanning stops either after 3 digits
+           have been consumed, or a non-base 10 digit occurs.</p>
+</li>
+<li>
+<p><code>\&lt;newline&gt;</code>: <code>ByteString</code> and <code>String</code> only. The newline of the current line
+                and the leading whitespace (<code>' '</code> or <code>'\t'</code>) will be omitted
+                from the literal.</p>
+</li>
+</ul>
+<h3 id='precedence'>Precedence</h3>
+<p>Lily's precedence table, from lowest to highest:</p>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>= /= *= += -= &lt;&lt;= &gt;&gt;=</code></td>
+<td>Assign/compound assign</td>
+</tr>
+<tr>
+<td><code>||</code></td>
+<td>Logical or</td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>Logical and</td>
+</tr>
+<tr>
+<td><code>&gt;= &gt; &lt; &lt;= == !=</code></td>
+<td>Comparison and equality</td>
+</tr>
+<tr>
+<td><code>++</code></td>
+<td>Concatenate</td>
+</tr>
+<tr>
+<td><code>|&gt;</code></td>
+<td>Function pipe</td>
+</tr>
+<tr>
+<td><code>&amp; | ^</code></td>
+<td>Bitwise and, or, xor</td>
+</tr>
+<tr>
+<td><code>&lt;&lt; &gt;&gt;</code></td>
+<td>Bitwise shifts</td>
+</tr>
+<tr>
+<td><code>+ -</code></td>
+<td>Plus, minus</td>
+</tr>
+<tr>
+<td><code>% * /</code></td>
+<td>Modulo, multiply, divide</td>
+</tr>
+</tbody>
+</table>
+<p>Operations such as <code>x.y</code> member lookup and subscripts take over either the
+entire current value, or the right side of the current binary operation.</p>
+<h3 id='operations'>Operations</h3>
+<p>Basic arithmatic operations (<code>+ - * /</code>) can be used for two <code>Double</code> values, or
+two <code>Integer</code> values, or when there is one <code>Double</code> and one <code>Integer</code> value. The
+result is a <code>Double</code> if either side is a <code>Double</code>, <code>Integer</code> otherwise.</p>
+<p>Other primitive operations (shifts, bitwise operations, and modulo) are only
+valid if both sides are <code>Integer</code>.</p>
+<p>Comparison operations (<code>&gt;= &gt; &lt; &lt;=</code>) are allowed on any two sets of <code>Integer</code>,
+<code>String</code>, or <code>Double</code>.</p>
+<p>Equality operations (<code>== !=</code>) are allowed on any two equivalent types. <code>List</code>,
+<code>Hash</code>, <code>Tuple</code>, and variants have their members compared against each other,
+so that <code>[1] == [1]</code> is <code>true</code>. All other classes (aside from primitives) go
+through reference (pointer) comparison so that <code>Dynamic(1) == Dynamic(1)</code> is
+<code>false</code>.</p>
+<h3 id='interpolation'>Interpolation</h3>
+<p>The <code>++</code> operator, <code>String.format</code>, and <code>print</code> all make use of built-in
+interpolation. Interpolation works as follows:</p>
+<p>Primitive values such as <code>Integer</code>, <code>Double</code>, and <code>String</code> have their content
+written out.</p>
+<p>Built-in containers have their inner contents written out. <code>Hash</code> does not
+guarantee an ordering to the contents it writes out.</p>
+<p>Non-scoped variants print just their name and their contents. Scoped variants
+print out the enum name and a dot first.</p>
+<p>Classes ( <code>Dynamic</code> included ) print out their address.</p>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

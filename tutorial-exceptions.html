@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Exceptions - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li class="active"><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>Occasionally there are errors that are not expected: A subscript of a <code>List</code> is
+out-of-bounds or there is an accidental attempt to divide by zero. In many
+cases, the use of <code>Option</code> or <code>Result</code> is preferable to using an exception. Lily
+has predefined exceptions for when those enums are not suitable.</p>
+<p>The base of all exceptions is the <code>Exception</code> class. It is predefined as
+follows:</p>
+<pre><code>class Exception(var @message: String) {
+    public var @traceback: List[String] = []
+}
+</code></pre>
+
+<p>When an exception is raised, the <code>traceback</code> field of it is replaced with the
+current call stack.</p>
+<h3 id='hierarchy'>Hierarchy</h3>
+<p>The exception hierarchy is as follows:</p>
+<ul>
+<li>
+<p><code>DivisionByZero</code>: Attempt to divide or modulo by zero.</p>
+</li>
+<li>
+<p><code>Exception</code>: Base class of all raiseable exceptions.</p>
+</li>
+<li>
+<p><code>IndexError</code>: Out-of-bounds access of a container (such as <code>List</code>).</p>
+</li>
+<li>
+<p><code>IOError</code>: Incorrect usage of a <code>File</code>.</p>
+</li>
+<li>
+<p><code>KeyError</code>: Attempt to read a value from a <code>Hash</code> that does not exist.</p>
+</li>
+<li>
+<p><code>RuntimeError</code>: Bad runtime action such as modifying a hash during iteration
+                  or exceeding the recursion limit.</p>
+</li>
+<li>
+<p><code>ValueError</code>: Invalid or unreasonable value provided.</p>
+</li>
+</ul>
+<p>Any of these exceptions can be inherited to create a custom exception. The try
+section in the blocks area details how <code>try/except</code> works, and more on raising
+custom exceptions.</p>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

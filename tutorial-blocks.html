@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Blocks - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>Lily's block syntax is a mixture of ideas from Python and C:</p>
+<ul>
+<li>
+<p>The condition passed to a block ends with <code>:</code></p>
+</li>
+<li>
+<p>By default, blocks allow a single expression.</p>
+</li>
+<li>
+<p>For multiple expressions, the entire block must be in braces</p>
+</li>
+</ul>
+<p>In practice, it looks like this:</p>
+<pre><code>define did_i_pass(score: Integer, threshold: Integer): Boolean
+{
+    if score &lt; threshold: {
+        return false
+    else:
+        print(&quot;You passed!&quot;)
+        return true
+    }
+}
+</code></pre>
+
+<p>The <code>:</code> token is used as a terminator to make the end of the block condition
+unambiguous.</p>
+<p>The style of using one brace for all branches was chosen to lessen the potential
+of dangling curly braces when adjusting branch arms to support multiple
+expressions.</p>
+<h3 id='truthiness'>Truthiness</h3>
+<p>Lily allows several non-<code>Boolean</code> values to be checked for truthiness. Here are
+the different types and what Lily considers false for them.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>False value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Boolean</code></td>
+<td><code>false :P</code></td>
+</tr>
+<tr>
+<td><code>Double</code></td>
+<td><code>0.0</code></td>
+</tr>
+<tr>
+<td><code>Integer</code></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td><code>List</code></td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td><code>""</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id='if'>if</h3>
+<p>The most common kind of block. Unlike most curly-brace languages, branches
+themselves shouldn't have braces. Instead, Lily requires the use of one set of
+braces enclosing the entire if condition such as in the example above. Here's a
+simple single-line set of if's.</p>
+<pre><code>define letter_for_grade(grade: Integer): String
+{
+    if grade &gt;= 90:
+        return &quot;A&quot;
+    elif grade &gt;= 80:
+        return &quot;B&quot;
+    elif grade &gt;= 70:
+        return &quot;C&quot;
+    elif grade &gt;= 60:
+        return &quot;D&quot;
+    else:
+        return &quot;F&quot;
+}
+</code></pre>
+
+<h3 id='for'>for</h3>
+<p>Execute expression(s) while within a given range.</p>
+<pre><code>var items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+
+for i in 0...items.size() - 1:
+    print(&quot;Item {0} is {1}.&quot;.format(i, items[i]))
+
+# Result:
+# Item 0 is a.
+# Item 1 is b.
+# Item 2 is c.
+</code></pre>
+
+<p>A <code>for</code> loop is composed of a var, start value, end value, and an increment.</p>
+<p>If the var of a <code>for</code> loop does not exist, it is created and lasts only for the
+duration of the loop. Alternatively, one can specify an existing var to use as
+the counter.</p>
+<p>The default increment is <code>1</code>. However, it is possible to specify either an
+expression, or a different literal value to increment by. Note that if the loop
+increment is or evaluates to <code>0</code>, an exception will be raised.</p>
+<p>The values that a <code>for</code> loop works on (var, start, end, increment) must all be
+of the type <code>Integer</code>.</p>
+<pre><code>var items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+
+for i in items.size() - 1...0 by -1:
+    print(&quot;Item {0} is {1}.&quot;.format(i, items[i]))
+
+# Result:
+# Item 2 is c.
+# Item 1 is b.
+# Item 0 is a.
+</code></pre>
+
+<p>It is possible for the start, end, and increments to each be an expression.
+Expressions are evaluated from left to right (start, end, increment), and
+exactly once before the body of the loop.</p>
+<pre><code>var counter = 0
+
+define return_counter: Integer {
+    var out = counter
+    counter += 1
+    return out
+}
+
+for i in 0...return_counter():
+    print(&quot;i is {0}&quot;.format(i))
+
+# Result:
+# i is 0
+</code></pre>
+
+<p>The control flow of a <code>for</code> loop (and other loops) can be altered by using
+<code>continue</code> to jump to the top of a <code>for</code>, or <code>break</code> to exit the loop.</p>
+<h3 id='while'>while</h3>
+<p>Execute expression(s) while a predicate is truthy.</p>
+<pre><code>var i = 0
+var i_values: List[Integer] = []
+
+while i != 5: {
+    i_values.push(i)
+    i += 1
+}
+
+print(i_values)
+
+# Result:
+# [0, 1, 2, 3, 4]
+</code></pre>
+
+<p>For an infinite loop, use <code>while 1: { (expression(s)) }</code>. <code>while</code> supports both
+<code>break</code> and <code>continue</code> for flow control.</p>
+<h3 id='do'>do</h3>
+<p>Similar to <code>while</code>, except that the body is always executed at least once:</p>
+<pre><code>var i = 1
+
+do:
+    print(i)
+while i != 1
+</code></pre>
+
+<p><code>do</code> supports both <code>break</code> and <code>continue</code> for flow control.</p>
+<p>One caveat of <code>do</code> is that the condition cannot include variables declared
+within the body. This restriction exists because the var's initialization may
+have been skipped over by one of the above mentioned flow control keywords.</p>
+<h3 id='try'>try</h3>
+<p>Execute expression(s) while trapping for exceptions.</p>
+<p>A <code>try</code> block attempts to execute expression(s) within the <code>try</code> section. If any
+expression raises an exception, the <code>except</code> branches are tested.</p>
+<pre><code>try:
+    1 / 0
+except DivisionByZeroError:
+    print(&quot;Can't divide by zero.&quot;)
+</code></pre>
+
+<p>Similar to <code>if</code>, braces go around the entire block after the <code>try</code>'s colon:</p>
+<pre><code>try {
+    1 / 0
+    var v = 10
+except DivisionByZeroError:
+    print(&quot;Still can't divide by zero.&quot;)
+}
+</code></pre>
+
+<p>Exception capture tests <code>except</code> blocks starting from the first one specified to
+the last. Furthermore, capture can specify an underlying class to trap:</p>
+<pre><code>try:
+    raise ValueError(&quot;!!!&quot;)
+except Exception:
+    print(&quot;This will be seen.&quot;)
+except ValueError:
+    print(&quot;This is not possible.&quot;)
+
+# Result:
+# This will be seen.
+</code></pre>
+
+<p>A handful of exception classes are provided, with <code>Exception</code> being the base.
+New exceptions can be created by inheriting from a predefined error class or
+from <code>Exception</code> itself.</p>
+<p>When capturing exceptions, use <code>as &lt;name&gt;</code> to create a var to hold the raised
+exception. The var will exist until the end of the except branch on which it was
+declared. The base <code>Exception</code> class provides the properties <code>traceback</code> and
+<code>message</code>.</p>
+<pre><code>class MyError(message: String, var @code: Integer) &lt; Exception(message) {}
+
+try:
+    raise MyError(&quot;Oh no&quot;, 100)
+except MyError as e:
+    print(&quot;Caught custom error with code {0}, message '{1}'.&quot;.format(e.code, e.message))
+
+# Result:
+# Caught custom error with code 100, message 'Oh no'.
+</code></pre>
+
+<h3 id='match'>match</h3>
+<p>Exhaustive selection on an enum or class.</p>
+<p>The <code>match</code> keyword takes an expression as input, then branches off depending on
+the contents. The most common use of <code>match</code> is with enums and variants. Here's
+an example using the predefined <code>Option</code> with variants <code>Some</code> and <code>None</code>:</p>
+<pre><code>var v = Some(&quot;body&quot;) # Type: Option[String]
+
+match v: {
+    case Some(s):
+        print(&quot;Success!&quot;)
+    case None:
+        print(&quot;Shouldn't reach here.&quot;)
+}
+# Result:
+# Success!
+</code></pre>
+
+<p>This kind of matching is called <code>decomposition</code>, because the contents of the
+<code>Option</code> are decomposed into vars. What makes <code>match</code> interesting is that it
+requires that all cases are accounted for. If any cases are missing from a
+<code>match</code> block, a syntax error is raised.</p>
+<p>Decomposition of a variant must account for all elements. If, for example, the
+<code>Some</code> case above was changed to <code>case Some:</code>, it would be an error because not
+all cases are accounted for.</p>
+<p>In some situations, one or more fields of a variant are not important. In those
+situations, a single underscore ( <code>_</code> ) can be used in place of a var name to
+skip decomposition:</p>
+<pre><code>enum Color {
+    Red,
+    Blue,
+    Green,
+    RGB(Integer, Integer, Integer)
+}
+
+var c = RGB(0xFF, 0xCC, 0xDD)
+
+match c: {
+    case RGB(_, blue, _):
+        print(&quot;Custom color (blue: {0}).&quot;.format(blue))
+    case Red:
+    case Blue:
+    case Green:
+}
+
+# Result:
+# Custom color (blue: 204).
+</code></pre>
+
+<p>One problem with the above example is that there are three cases which don't
+execute any code. One other feature of <code>match</code> is being able to use <code>else</code> to
+handle all unhandled cases:</p>
+<pre><code>enum Color {
+    Red,
+    Blue,
+    Green,
+    RGB(Integer, Integer, Integer)
+}
+
+var c = Red
+
+match c: {
+    case Red:
+        print(&quot;The color is red.&quot;)
+    else:
+}
+
+# Result:
+# The color is red.
+</code></pre>
+
+<p>The above examples all use flat enums. For custom scoped enums, <code>match</code> requires
+that the variant names are qualified with their enum name. The interpreter can
+infer the enum name from the type given, but requiring qualified names ensures
+that scoped variants are used consistently (not scoped here, unscoped there).</p>
+<p><code>match</code> is also able to work against classes. Instead of the matching expression
+being an enum, it is instead a class. The cases of a class match are paired up
+with subclasses. This provides a safe way of testing if a value of a base class
+contains an inherited class value without testing.</p>
+<p>One caveat of <code>match</code> against classes is that, unlike <code>try</code>'s filtering, a
+<code>case</code> against a base class will <strong>not</strong> succeed.</p>
+<p>When matching against a class, the case must always specify a single var. That
+var will have the type:</p>
+<pre><code>class MyError(message: String, var @code: Integer) &lt; ValueError(message) { }
+
+var v: Exception = MyError(&quot;asdf&quot;, 1234)
+
+match v: {
+    case ValueError(e):
+        print(&quot;Not reachable.&quot;)
+    case MyError(e):
+        print(&quot;Matched to MyError with message {0} and code {1}.&quot;
+              .format(e.message, e.code))
+    else:
+}
+</code></pre>
+
+<p>When matching to a class, the var in question must not contain generic
+information, since the interpreter does not store type information at runtime,
+only class information.</p>
+<p>Another note is that in class matches, unlike enum matches, there must always be
+an <code>else</code> clause present. Even if it is empty, the <code>else</code> clause serves as a
+reminder that there are other potential captures to be dealt with.</p>
+<p>One other kind of match is a special match against <code>Dynamic</code>. The <code>Dynamic</code> type
+is unique in that it can contain any other type inside of it, so long as that
+type does not use generics. This allows <code>Dynamic</code> to match against any class,
+not just ones that inherit ( <code>Dynamic</code> doesn't allow inheritance anyway).</p>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

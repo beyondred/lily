@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Enums - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li class="active"><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>Enums are a datatype composed of a fixed set of variant classes. A variant class
+can take any number of types (including the enum itself), or can be empty. Enums
+declarations can include methods as well as variants.</p>
+<pre><code>enum Rgb {
+    Red,
+    Green,
+    Blue
+
+    define is_blue: Boolean {
+        match self: {
+            case Blue: return true
+            else:      return false
+        }
+    }
+}
+
+var v = Blue
+
+print(v.is_blue()) # true
+print(v) # Blue
+</code></pre>
+
+<p>Since enums aren't inheritable, their methods don't need qualifiers like with
+user-defined classes.</p>
+<p>By default, variants of an enum are flat. Variants of a flat enum can be
+referenced directly.</p>
+<p>In contrast, the <code>scoped</code> qualifier makes it so that variants of an enum are
+only accessible through the enum name:</p>
+<h3 id='scoped-enums'>Scoped enums</h3>
+<pre><code>scoped enum Rgb {
+    Red,
+    Green,
+    Blue
+
+    define is_blue: Boolean {
+        match self: {
+            case Rgb.Blue: return true
+            else:          return false
+        }
+    }
+}
+
+var v = Rgb.Blue
+
+print(v.is_blue()) # true
+print(v) # Rgb.Blue
+</code></pre>
+
+<h3 id='varargs'>Varargs</h3>
+<p>Variants can be declared to take varargs. If they do, the extra arguments (if
+any are given) are put into a <code>List</code>.</p>
+<pre><code>enum Example {
+    ManyInts(Integer...),
+    Nothing
+}
+
+var v = ManyInts(1, 2, 3, 4)
+
+match v: {
+    case ManyInts(m):
+        print(m)
+    else:
+}
+
+# Result:
+# [1, 2, 3, 4]
+</code></pre>
+
+<h3 id='optargs'>Optargs</h3>
+<p>Variants are not able to use optional arguments, because they are not actually
+functions.</p>
+<h3 id='keyargs'>Keyargs</h3>
+<p>Variants can hold keyword arguments:</p>
+<pre><code>scoped enum Item {
+    Thing(:left Integer, :right Integer)
+    Other
+}
+
+var v = Item.Thing(:left 1, :right 2)
+
+v = Item.Thing(1, 2)
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Generics - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li class="active"><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>In Lily, classes, enums, and functions can make use of generics. Currently,
+generics are quite limited:</p>
+<p>They must be a single capital letter, must be declared before use, and there are
+no traits or qualifiers.</p>
+<p>All of those issues will be addressed in a future version of the language. Even
+with those restrictions, generics are quite useful.</p>
+<pre><code>define transform[A, B](input: A, fn: Function(A =&gt; B)): B
+{
+    return input |&gt; fn
+}
+
+transform(&quot;10&quot;, String.parse_i) # Some(10)
+
+define ascending(a: Integer, b: Integer): Boolean { return a &gt; b }
+define descending(a: Integer, b: Integer): Boolean { return a &lt; b }
+
+define sort_inplace[A](lst: List[A], cmp: Function(A, A =&gt; Boolean)): List[A]
+{
+    for i in 0...input.size() - 1: {
+        var j = i
+        while j &gt; 0 &amp;amp;&amp;amp; cmp(input[j - 1], input[j]): {
+            var temp = input[j]
+            input[j] = input[j - 1]
+            input[j - 1] = temp
+            j -= 1
+        }
+    }
+    return input
+}
+
+sort_inplace([1, 3, 5, 2, 4], ascending)  # [1, 2, 3, 4, 5]
+sort_inplace([1, 3, 2],       descending) # [3, 2, 1]
+
+class Container[A](input: A) {
+    public var @contents = [input]
+
+    public define push(value: A): self {
+        @contents.push(value)
+    }
+}
+
+var v = Container(1)
+        .push(2)
+        .push(3)
+
+print(v) # [1, 2, 3]
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

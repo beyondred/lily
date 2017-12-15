@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Functions - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li class="active"><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>In Lily, functions are first-class entities. They can be passed around as
+arguments, returned, stored in vars, and so forth. There are several kinds of
+functions in the language, as well as a handful of keywords that can augment
+them.</p>
+<p>The most common kind of function is a native function created through the
+<code>define</code> keyword:</p>
+<h3 id='define'>define</h3>
+<pre><code># Function(Integer, Integer =&gt; Integer)
+define add(left: Integer, right: Integer): Integer {
+    return left + right
+}
+</code></pre>
+
+<p>The above defines <code>add</code> as taking two <code>Integer</code> values and producing an
+<code>Integer</code> as output.</p>
+<p>In the event that a function has no arguments, or produces no output, that
+entire section can be omitted:</p>
+<pre><code># Function( =&gt; Integer)
+define return_10: Integer {
+    return 10
+}
+
+# Function(Integer)
+define return_nothing(a: Integer) {
+}
+
+# Function()
+define no_op {
+}
+</code></pre>
+
+<p>Like many curly-brace family languages, functions are invoked by passing their
+arguments like so: <code>add(5, 10)</code> to receive <code>15</code>.</p>
+<p>Omitting a return type doesn't mean that a function doesn't return anything. A
+function that doesn't mention a return value will actually the value <code>unit</code> of
+the class <code>Unit</code>. Since all functions actually return a value (even if it's just
+<code>unit</code>), it's possible to chain functions that otherwise could not be chained:</p>
+<pre><code>define no_op { }
+
+print(no_op()) # unit
+</code></pre>
+
+<p>Functions can also be used as arguments:</p>
+<pre><code>define square(input: Integer): Integer {
+    return input * input
+}
+
+define apply_action(a: Integer, fn: Function(Integer =&gt; Integer)): Integer
+{
+    return fn(a)
+}
+
+print(apply_action(10, square)) # 100
+</code></pre>
+
+<p>The <code>define</code> keyword has a number of modifiers that are available to it
+( <code>public</code>, <code>forward</code>, <code>static</code>, etc. ). For simplicity, Lily requires that
+modifiers are introduced in alphabetical order.</p>
+<h3 id='lambdas'>Lambdas</h3>
+<p>One problem with the above example is that <code>square</code> is relatively simple. One
+is likely to assume that <code>square</code> will take an input, multiply it by itself, and
+return that input. But suppose that the codebase is large, and <code>square</code> is
+somewhere else. If there is an issue, the source to <code>square</code> must be tracked
+down.</p>
+<p>An alternative is to use a lambda. Lambdas are nameless functions that can be
+used where a function is needed. A lambda begins with <code>(|</code>, followed by argument
+names, until <code>|</code> is seen. From there, everything until there is a matching <code>)</code>
+for the <code>(|</code> is the body of the lambda. Here's the above, rewritten to use a
+lambda.</p>
+<pre><code>define apply_action(a: Integer, fn: Function(Integer =&gt; Integer)): Integer
+{
+    return fn(a)
+}
+
+print(apply_action(10, (|a| a * a) )) # 100
+</code></pre>
+
+<p>Now the intent is much clearer, because <code>a</code> is being multiplied by itself.</p>
+<p>Another feature of lambdas is that they are values, and the var they're assigned
+to can opt to have a different lambda. On the other hand, lambdas are quite
+restricted, and not eligible for many of the function features listed below.</p>
+<p>Lambdas don't require type information. In the above example, the lambda uses
+inference to determine that <code>a</code> should be of type <code>Integer</code>. Since lambdas
+exist primarily to return some kind of a value, the return type of a lambda is
+the last expression that run. If the last expression is part of a block such as
+<code>if</code> or <code>match</code>, then the return type is instead <code>unit</code>.</p>
+<h3 id='closures'>Closures</h3>
+<p>One limitation of the above kinds of declarations is that, outside of global
+variables, they're limited strictly to what they've been given. This is where
+closures come in handy.</p>
+<p>Here's an example of a function that returns an ever-increasing <code>Integer</code>
+value:</p>
+<pre><code>define get_counter: Function( =&gt; Integer) {
+    var counter = 0
+
+    define counter_fn: Integer {
+        counter += 1
+        return counter
+    }
+
+    return counter_fn
+}
+
+var c = get_counter()
+var results = [c(), c(), c()]
+
+print(results)
+# Result:
+# [0, 1, 2]
+</code></pre>
+
+<p>Lambdas can also be closures:</p>
+<pre><code>define list_total(l: List[Integer]): Integer {
+    var total = 0
+
+    l.each(|e| total += e )
+
+    return total
+}
+</code></pre>
+
+<p>The above would be much improved if it used generics to allow for any type of
+<code>List</code>. Or, even better, if it used <code>List.fold</code> to avoid making a closure at
+all.</p>
+<h3 id='foreign'>foreign</h3>
+<p>Foreign functions are functions that are introduced from a non-Lily library.
+These functions, like those created by <code>define</code>, cannot be reassigned.</p>
+<h3 id='features'>Features</h3>
+<p>Functions in Lily have a number of different features available to them. All
+function kinds except for lambdas can make use of all of these features.</p>
+<h4 id='forward'>forward</h4>
+<p>Using the <code>forward</code> keyword before <code>define</code> denotes that the function will be
+declared at some point in the future. Instead of giving the <code>define</code> a body, it
+must instead have the triple dot (<code>...</code>) token:</p>
+<pre><code>forward define add(Integer, Integer): Integer { ... }
+
+# (more definitions)
+
+define add(x: Integer, y: Integer): Integer {
+    return x + y
+}
+</code></pre>
+
+<p>Functions declared with <code>forward</code> are not allowed to specify names for their
+variables, and are not allowed to use keyword arguments.</p>
+<p>While there are unresolved forward declarations, it is a syntax error to attempt
+to import a file, declare a class property, or declare a var. This is done to
+prevent the resolving function from using variables that are not properly
+initialized.</p>
+<p>Additionally, if a class or module finishes with incomplete forward
+declarations, a syntax error is generated immediately.</p>
+<h4 id='varargs'>Varargs</h4>
+<p>Adding <code>...</code> to the end of a type denotes that the function can receive a
+variable number of arguments of that type. The function receives the arguments
+as a <code>List</code> of the type provided. If no arguments were passed, the <code>List</code> will
+be empty.</p>
+<pre><code># Function(Integer...) =&gt; Integer
+define sum(numbers: Integer...): Integer
+{
+    var total = 0
+    numbers.each(|e| total += e )
+    return total
+}
+
+# sum() # 0
+# sum(1, 2, 3) # 6
+</code></pre>
+
+<h4 id='optargs'>Optargs</h4>
+<p>Adding <code>*</code> before a type, then <code>= &lt;value&gt;</code> after it denotes that the parameter
+is optional. Optional arguments may be a simple value, or an expression.
+Required arguments must not come after an optional argument.</p>
+<p>The expressions of optional arguments, if run, are always run from left to
+right. As a result, it's permissible for a parameter to depend on another to the
+left of it.</p>
+<pre><code># Function(*Integer =&gt; Integer)
+define optarg(a: *Integer = 10): Integer { return a + 10 }
+
+optarg(100) # 110
+optarg() # 20
+
+# Function(*Integer, *Integer, *Integer =&gt; Integer)
+define my_slice(source: List[Integer],
+                start: *Integer = 0,
+                end: *Integer = source.size()): List[Integer]
+{
+    return source.slice(start, end)
+}
+
+my_slice([1, 2, 3], 1)    # [2, 3]
+my_slice([4, 5, 6], 0, 1) # [4]
+</code></pre>
+
+<p>The calling function runs the optional argument expressions each time they are
+needed. As a result, each invocation will receive fresh versions of a default
+argument that do <strong>not</strong> carry over into the next invocation.</p>
+<pre><code># Function(*List[Integer] =&gt; List[Integer])
+define optarg_list(x: *List[Integer] = []): List[Integer]
+{
+    x.push(x.size())
+    return x
+}
+
+optarg_list()             # [0]
+optarg_list([1, 2])       # [1, 2, 2]
+optarg_list()             # [0]
+optarg_list([10, 20, 30]) # [10, 20, 30, 3]
+</code></pre>
+
+<p>Mixing variable and optional arguments is permissible. By default, the vararg
+parameter receives an empty <code>List</code> if no values are passed. Mixing these two
+features allows a different default value:</p>
+<pre><code># Function(Integer, *Integer, *Integer... =&gt; Integer)
+define optarg_sum(a: Integer,
+                  b: *Integer = 10,
+                  args: *Integer... = [20, 30]): Integer
+{
+    var total = a + b
+
+    for i in 0...args.size() - 1:
+        total += args[i]
+
+    print(total)
+    return total
+}
+
+optarg_sum(5)              # 65
+optarg_sum(5, 20)          # 75
+optarg_sum(10, 20, 30, 40) # 100
+</code></pre>
+
+<h4 id='keyargs'>Keyargs</h4>
+<p>Placing <code>:&lt;name&gt;</code> before the name of a parameter will allow the function to be
+called using keyword arguments. Keyword arguments allow calling a function with
+arguments in a different order than the function's parameters. The function can
+then be called either with positional arguments or keyword arguments.</p>
+<pre><code># Function(Integer, Integer, Integer =&gt; Integer)
+define simple_keyarg(:first x: Integer,
+                     :second y: Integer,
+                     :third z: Integer): List[Integer]
+{
+    return [a, b, c]
+}
+
+simple_keyarg(1, 2, 3)                         # [1, 2, 3]
+
+simple_keyarg(1, :second 2, :third 3)          # [1, 2, 3]
+
+simple_keyarg(:third 30, :first 10, :second 5) # [10, 5, 30]
+</code></pre>
+
+<p>It isn't necessary to name all arguments:</p>
+<pre><code># Function(Integer, Integer)
+define tail_keyarg(x: Integer, :y y: Integer) {}
+
+tail_keyarg(10, 20)
+
+tail_keyarg(10, :y 20)
+</code></pre>
+
+<p>Calling a function with keyword arguments has some restrictions:</p>
+<pre><code># simple_keyarg(:first 1, 2, 3)
+# Syntax error: Positional argument after keyword argument
+
+# simple_keyarg(1, :first 1, 2, 3)
+# Syntax error: Duplicate value provided to the first argument.
+
+# simple_keyarg(1, 2, 3, :asdf 1)
+# Syntax error: 'asdf' isn't a valid keyword.
+</code></pre>
+
+<p>Keyword arguments are evaluated and contribute to type inference in the order
+that they're provided:</p>
+<pre><code>var keyorder_list: List[Integer] = []
+
+define keyorder_bump(value: Integer): Integer
+{
+    keyorder_list.push(value)
+    return value
+}
+
+define keyorder_check(:first  x: Integer,
+                      :second y: Integer,
+                      :third  z: Integer): List[Integer]
+{
+    return keyorder_list
+}
+
+keyorder_check(:second keyorder_bump(2),
+               :first  keyorder_bump(1),
+               :third  keyorder_bump(3))
+               # [2, 1, 3]
+</code></pre>
+
+<p>A function call with keyword arguments is verified at parse-time. The vm does
+not understand keyword arguments, and the type system does not carry keyword
+information either.</p>
+<p>Despite the above, keyword arguments can be mixed together with optional
+arguments and variable arguments:</p>
+<pre><code>define optkey(:x x: *Integer = 10,
+              :y y: *Integer = 20): Integer
+{
+    return x + y
+}
+
+optkey()        # 30
+optkey(50, 60)  # 110
+optkey(:y 170)  # 180
+optkey(4, :y 7) # 11
+
+define varkey(:format fmt: String,
+              :arg args: *String...=[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]): List[String]
+{
+    args.unshift(fmt)
+    return args
+}
+
+varkey(&quot;fmt&quot;)                # [&quot;fmt&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+varkey(&quot;fmt&quot;, &quot;1&quot;, :arg &quot;2&quot;) # [&quot;fmt&quot;, &quot;1&quot;, &quot;2&quot;]
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

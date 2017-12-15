@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Classes - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li class="active"><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>User-declared classes provide a way to group together a set of data and related
+functions. In Lily, classes are only allowed to have one parent class at most as
+a way of keeping their internal implementation simpler.</p>
+<p>A simple class declaration of a 2d point (x and y coordinate) looks like this:</p>
+<h3 id='declaration'>Declaration</h3>
+<pre><code>class Point(x: Integer, y: Integer) {
+    public var @x = x
+    public var @y = y
+}
+</code></pre>
+
+<p>In Lily, the body of the <code>class</code> block serves to both define class variables and
+to initialize them.</p>
+<p>Inside a class, properties have a <code>@</code> prefix like in Ruby. Outside of it, both
+methods and properties are accessed using a dot.</p>
+<pre><code>class Point(x: Integer, y: Integer) {
+    public var @x = x
+    public var @y = y
+
+    public define increase(x_value: Integer, y_value: Integer) {
+        @x += x_value
+        @y += y_value
+    }
+}
+
+var p = Point(5, 10)
+
+print(p.x) # 5
+
+p.increase(100, 200)
+
+print(p.y) # 210
+</code></pre>
+
+<p>In situations like the above where the inputs to a class become public class
+properties, a shorthand is available:</p>
+<pre><code>class Point(var @x: Integer, var @y: Integer) {  }
+</code></pre>
+
+<p>Since both class properties and class methods are accessed the same outside of a
+class, it is a syntax error to have a property and a method with the same name.</p>
+<h3 id='scope'>Scope</h3>
+<p>Prior to declaring a class member, a scope is needed. There are three possible
+scopes that a class member or function can have:</p>
+<p><code>public</code> denotes that the member is available anywhere.</p>
+<p><code>protected</code> restricts the member to the class itself, or any class that inherits
+from it.</p>
+<p><code>private</code> restricts the member to only the class.</p>
+<h3 id='inheritance'>Inheritance</h3>
+<p>Classes use the <code>&lt;</code> token to denote inheriting from another class when writing
+the header:</p>
+<pre><code>class Point2D(var @x: Integer, var @y: Integer) {}
+
+class Point3D(x: Integer, y: Integer, var @z: Integer) &lt; Point2D(x, y) {}
+</code></pre>
+
+<p>But what about chaining methods from different classes? Lily allows using a
+return type of <code>self</code> as a special case for class methods. This special case
+allows chaining methods without losing type information:</p>
+<pre><code>class Point2D(var @x: Integer, var @y: Integer) {
+    public define increase_xy(x_value: Integer, y_value: Integer): self {
+        @x += x_value
+        @y += y_value
+    }
+}
+
+class Point3D(x: Integer, y: Integer, var @z: Integer) &lt; Point2D(x, y) {
+    public define increase_z(z_value: Integer): self {
+        @z += z_value
+    }
+}
+
+var p3d = Point3D(10, 20, 30)
+
+p3d.increase_xy(100, 200)
+   .increase_z(300)
+
+var result = [p3d.x, p3d.y, p3d.z]
+
+print(result)
+
+# Result:
+# [110, 220, 330]
+</code></pre>
+
+<h3 id='static'>static</h3>
+<p>By default, class methods receive an implicit <code>self</code> parameter as their first
+argument. The <code>static</code> qualifier, when applied to a class method, turns that
+behavior off:</p>
+<pre><code>class Utils {
+    public static define square(x: Integer) { return x * x }
+}
+
+var v = Utils.square(10) # 100
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

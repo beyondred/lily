@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Import - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li class="active"><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>Lily's import system borrows mostly from Python, notably how the module name is
+used as a namespace for the symbols inside:</p>
+<pre><code># fib.lily
+
+define fib(n: Integer): Integer
+{
+    if n &lt; 2:
+        return n
+    else:
+        return fib(n - 1) + fib(n - 2)
+}
+
+# other.lily
+
+import fib
+
+# print(fib(10)) # Syntax error
+
+print(fib.fib(10)) # 55
+</code></pre>
+
+<p>If a module executes code, the code is run only the first time the module is
+loaded.</p>
+<h3 id='import-as'>Import as</h3>
+<p>It is possible to rename modules using the <code>as</code> keyword:</p>
+<pre><code>import fib as f
+
+print(f.fib(10)) # 55
+
+# print(fib.fib(10)) # Syntax error because fib isn't available.
+</code></pre>
+
+<p>To extract only particular symbols from a module (and not the module itself),
+use <code>(&lt;name&gt;, &lt;name&gt;...)</code> before the import name. The module will be loaded, but
+not made visible (only the symbols mentioned will be).</p>
+<pre><code>import (argv, getenv) sys
+
+print(argv)
+print(getenv(&quot;HOME&quot;))
+</code></pre>
+
+<h3 id='import-symbols'>Import symbols</h3>
+<p>It is possible to import only certain symbols from a module. The code inside a
+module (if any) will still execute, but only the items in question will be
+available.</p>
+<p>Use <code>(name1, name2, ...)</code> before the module name. This <strong>cannot</strong> be used with
+<code>import x as y</code>.</p>
+<pre><code>import (argv, getenv) sys
+
+print(getenv(&quot;HOME&quot;)) # Returns the home path
+
+# print(sys.argv) # Syntax error because 'sys' is not loaded.
+</code></pre>
+
+<h3 id='import-multiple'>Import Multiple</h3>
+<p>Commas can be used to execute multiple import actions at once:</p>
+<pre><code>import fib as f,
+       sys,
+       (Time) time
+</code></pre>
+
+<p>The code inside of a module is only executed the first time that it is imported:</p>
+<pre><code># print_one.lily
+
+print(1)
+
+# other.lily
+
+import print_one
+
+# main.lily
+
+import print_one # prints 1
+import other # Does nothing.
+</code></pre>
+
+<h3 id='import-string'>Import String</h3>
+<p>To import a file from another directory, the path must be enclosed in quotes.
+The <code>/</code> character is used to denote path slashes, and will be turned into the
+appropriate character on platforms that do not use <code>/</code>.</p>
+<pre><code># somedir/point.lily
+
+class Point(var @x: Integer, var @y: Integer)
+{
+    public define stringified: String {
+        return &quot;Point({0}, {1})&quot;.format(@x, @y)
+    }
+}
+
+# first.lily
+
+import &quot;somedir/point&quot;
+
+print(point.Point(10, 20).stringified())
+</code></pre>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>

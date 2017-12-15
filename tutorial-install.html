@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Install - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li class="active"><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="core/module.core.html">Modules</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h3 id='requirements'>Requirements</h3>
+<p>To use Lily on your local machine, you'll first need to build it. Building the
+interpreter can be done in a few commands. You'll need two tools first:</p>
+<ul>
+<li>cmake, at version 3.0.0 or better</li>
+<li>A modern C (C11) compiler. MSVC, gcc, and clang are known to work.</li>
+</ul>
+<h3 id='install'>Install</h3>
+<p>Grab the Lily source code through whatever means you'd like. Open up a
+command-line prompt in the Lily directory and issue the following:</p>
+<pre><code>cmake .
+make
+make install
+</code></pre>
+
+<p>The result of the above is an executable named <code>lily</code> and a library that your
+programs can link to named <code>liblily</code>.</p>
+<h3 id='options'>Options</h3>
+<p>The following configuration options can be passed to <code>cmake</code> to alter the build:</p>
+<p><code>-DWITH_SANDBOX=(on|off)</code>: Defaults to <code>off</code>. If this is set to <code>on</code>, then the
+website sandbox will be built. This option requires <code>emscripten</code> to exist and be
+loaded in the current environment. An error is printed if either is lacking.</p>
+<h3 id='usage'>Usage</h3>
+<p>Create a file called <code>hello.lily</code> and save the following to it:</p>
+<pre><code>print(&quot;Hello, world!&quot;)
+</code></pre>
+
+<p>Execute the script with a console using <code>lily hello.lily</code>. You should see the
+message show up on your console.</p>
+<p>It's also possible to invoke the interpreter entirely from the console:</p>
+<pre><code>lily -s 'print(&quot;Hello, world!&quot;)`
+</code></pre>
+
+<p>By default, scripts are read in code-only mode. In this mode, all input is fed
+to the interpreter is read and executed. The alternative is template mode,
+wherein code is between <code>&lt;?lily ... ?&gt;</code> tags. Create another file called
+<code>template_hello.lily</code> with the following:</p>
+<pre><code>&lt;?lily ?&gt;
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;?lily print(&quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;) ?&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>Execute the script from the console using <code>lily -t template_hello.lily</code>. This
+time, the output will be just the html. By using the <code>-t</code> switch, the executable
+invokes the interpreter in template mode.</p>
+<p>In template mode, input to the interpreter is treated as content first. Only
+what's between <code>&lt;?lily ... ?&gt;</code> tags is executed as code. Template mode files
+require a tag at the very start of input. That prevents code-mode files from
+being passed to template mode.</p>
+<p>Finally, regardless of the mode that the interpreter starts in, subsequent
+imports always load in code-only mode. Combined with the tag restriction, it's
+possible to safely use code-mode libraries in template-mode modules.</p>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>
