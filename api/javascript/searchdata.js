@@ -1,5 +1,5 @@
 var indexSectionsWithContent = {
-   "Macros": {
+   "Types": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -29,7 +29,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Functions": {
+   "Macros": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -89,7 +89,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Classes": {
+   "Functions": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -119,7 +119,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Types": {
+   "Classes": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
