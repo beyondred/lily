@@ -143,6 +143,32 @@ import &quot;somedir/point&quot;
 
 print(point.Point(10, 20).stringified())
 </code></pre>
+
+<h3 id='import-paths'>Import paths</h3>
+<p>The default import handler for Lily tries paths in the following order:</p>
+<pre><code>&lt;current root&gt;/&lt;name&gt;.lily
+&lt;current root&gt;/&lt;name&gt;.(so/dll)
+
+&lt;current root&gt;/packages/&lt;name&gt;/src/&lt;name&gt;.lily
+&lt;current root&gt;/packages/&lt;name&gt;/src/&lt;name&gt;.(so/dll)
+
+&lt;original root&gt;/packages/&lt;name&gt;/src/&lt;name&gt;.lily
+&lt;original root&gt;/packages/&lt;name&gt;/src/&lt;name&gt;.(so/dll)
+</code></pre>
+
+<p>The base directory of the first file loaded by Lily is considered the original
+root. As a root module, any import that spans from it uses the root module's
+base directory as a starting point.</p>
+<p>Suppose the above example had another file at <code>somedir/sibling.lily</code>. To load
+that module, both <code>first.lily</code> and <code>somedir/point.lily</code> would use
+<code>import somedir/sibling</code>. That's because the sibling module is another module
+inside of <code>first.lily</code>.</p>
+<p>Loading a module from a packages directory is different. The first module loaded
+from a packages directory is considered a root module, and its imports will be
+run relative to that new root.</p>
+<p>By making import run relative to a root directory, it's possible for
+<code>somedir/point.lily</code> to make use of other libraries installed in the packages
+directory at the same level that <code>first.lily</code> is installed at.</p>
         </div>
     </div>
 </div>
