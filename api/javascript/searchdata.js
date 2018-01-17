@@ -29,7 +29,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Types": {
+   "Macros": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -89,7 +89,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Macros": {
+   "Classes": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -119,7 +119,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Classes": {
+   "Types": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
