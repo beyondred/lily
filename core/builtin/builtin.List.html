@@ -59,6 +59,11 @@ This calls <code>fn</code> for each element present within <code>self</code>. Th
 value as it accumulates can be found in the first value sent to <code>fn</code>.</p>
 <p>The result of this function is the result of doing an accumulation on each
 element within <code>self</code>.</p></div>
+<h3 id='method.get'><code>define <a href='#method.get'>get</a>(index: Integer): Option[A]</code></h3>
+<div class='doc'><p>
+Attempt to find <code>index</code> within <code>self</code>.</p>
+<p>If the index is within <code>self</code>, then the value is returned within a <code>Some</code>.</p>
+<p>Otherwise, this returns None.</p></div>
 <h3 id='method.insert'><code>define <a href='#method.insert'>insert</a>(index: Integer, value: A)</code></h3>
 <div class='doc'><p>
 Attempt to insert <code>value</code> at <code>index</code> within <code>self</code>. If index is negative, then

@@ -50,11 +50,11 @@ nothing happens.</p>
 <div class='doc'><p>
 Iterate through each pair that is present within <code>self</code>. For each of the pairs,
 call <code>fn</code> with the key and value of each pair.</p></div>
-<h3 id='method.get'><code>define <a href='#method.get'>get</a>(key: A, default: B): B</code></h3>
+<h3 id='method.get'><code>define <a href='#method.get'>get</a>(key: A): Option[B]</code></h3>
 <div class='doc'><p>
-Attempt to find <code>key</code> within <code>self</code>. If <code>key</code> is present, then the value
-associated with it is returned. If <code>key</code> cannot be found, then <code>default</code> is
-returned instead.</p></div>
+Attempt to find <code>key</code> within <code>self</code>.</p>
+<p>If <code>key</code> is present, then a <code>Some</code> containing the associated value is returned.</p>
+<p>Otherwise, this returns None.</p></div>
 <h3 id='method.has_key'><code>define <a href='#method.has_key'>has_key</a>(key: A): Boolean</code></h3>
 <div class='doc'><p>
 Return <code>true</code> if <code>key</code> is present within <code>self</code>, <code>false</code> otherwise.</p></div>
