@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>builtin.Coroutine - Lily</title>
+
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="../../css/docstyle.css" rel="stylesheet">
+
+        <script src="../../js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <h1>Class Coroutine</h1>
+<pre>(builtin) class Coroutine[A, B] {  }</pre>
+<div class='doc'><p>
+A <code>Coroutine</code> is similar to a <code>Function</code>, except that it can also yield values
+at different points along its lifetime. Every <code>Coroutine</code> has a callstack that
+belongs to it, as well as an exception state. A <code>Coroutine</code>&#39;s status can be
+discovered by one of the is_ methods.</p>
+<p>The <code>Coroutine</code> type takes two types. The first is the type that the <code>Coroutine</code>
+will be returning or yielding. The second is the type that the <code>Coroutine</code> takes
+as a message. A <code>Coroutine</code> can take empty <code>Unit</code> messages for simplicity, or a
+more interesting type if a more bidirectional kind of messaging is wanted. A
+<code>Coroutine</code> can get the value resumed using <code>Coroutine.receive</code> while within the
+<code>Coroutine</code>.</p>
+<p>The first argument of a <code>Function</code> to be made a <code>Coroutine</code> is always the
+<code>Coroutine</code> itself. If the <code>Function</code> specifies extra arguments, those arguments
+are to be passed to the intermediate result of <code>Coroutine.create</code>.</p></div>
+<h2>Methods</h2>
+<h3 id='function.create'><code>define <a href='#function.create'>create</a>(fn: Function(Coroutine[A, B], $1)): Function($1 => Coroutine[A, B]) <i>static</i></code></h3>
+<div class='doc'><p>
+This function is the entry point for creating a new <code>Coroutine</code>. &#39;fn&#39; is a
+<code>Function</code> that takes a <code>Coroutine</code> as a first argument, plus any number of
+extra arguments.</p>
+<p>The result of this function is an intermediate builder <code>Function</code>. The builder
+takes the extra arguments to &#39;fn&#39; and creates the <code>Coroutine</code> value.</p>
+<div class='linkblock' id='errors.function.create'><a href='#errors.function.create'>Errors</a></div>
+<ul>
+<li><code>RuntimeError</code>: If &#39;fn&#39; is not a native function.</li>
+</ul></div>
+<h3 id='method.is_done'><code>define <a href='#method.is_done'>is_done</a>: Boolean</code></h3>
+<div class='doc'><p>
+Returns <code>true</code> if the <code>Coroutine</code> has returned a value instead of yielding,
+<code>false</code> otherwise.</p></div>
+<h3 id='method.is_failed'><code>define <a href='#method.is_failed'>is_failed</a>: Boolean</code></h3>
+<div class='doc'><p>
+Returns <code>true</code> if the <code>Coroutine</code> raised an exception, <code>false</code> otherwise.</p></div>
+<h3 id='method.is_waiting'><code>define <a href='#method.is_waiting'>is_waiting</a>: Boolean</code></h3>
+<div class='doc'><p>
+Returns <code>true</code> if the <code>Coroutine</code> is ready to be resumed, <code>false</code> otherwise.</p></div>
+<h3 id='method.is_running'><code>define <a href='#method.is_running'>is_running</a>: Boolean</code></h3>
+<div class='doc'><p>
+Returns <code>true</code> if the <code>Coroutine</code> is running, <code>false</code> otherwise. Note that this
+does not mean that the <code>Coroutine</code> is the one currently running, only that it is
+running.</p></div>
+<h3 id='method.receive'><code>define <a href='#method.receive'>receive</a>: B</code></h3>
+<div class='doc'><p>
+This function returns the value that the <code>Coroutine</code> is holding, so long as the
+<code>Coroutine</code> is the one currently running.</p>
+<p>The value stored by the <code>Coroutine</code> is initially the first argument sent to the
+intermediate builder. Following that, it is the last value that was sent to the
+<code>Coroutine</code> using <code>Coroutine.resume_with</code>.</p>
+<div class='linkblock' id='errors.method.receive'><a href='#errors.method.receive'>Errors</a></div>
+<ul>
+<li><code>RuntimeError</code>: If &#39;self&#39; is not the current <code>Coroutine</code>.</li>
+</ul></div>
+<h3 id='function.resume'><code>define <a href='#function.resume'>resume</a>(self: Coroutine[A, Unit]): Option[A] <i>static</i></code></h3>
+<div class='doc'><p>
+Attempt to resume the <code>Coroutine</code> provided. A <code>Coroutine</code> can be resumed only if
+it is currently in the &#39;waiting&#39; state.</p>
+<p>This function does not send a value to the <code>Coroutine</code> which is why it requires
+the second parameter to be <code>Unit</code>.</p>
+<p>If the <code>Coroutine</code> is suspended and yields a value, the result is a <code>Some</code> of
+that value.</p>
+<p>Otherwise, this returns <code>None</code>.</p>
+<p>Note that if a <code>Coroutine</code> returns a value instead of yielding, the value is
+ignored and the result is <code>None</code>.</p></div>
+<h3 id='method.resume_with'><code>define <a href='#method.resume_with'>resume_with</a>(value: B): Option[A]</code></h3>
+<div class='doc'><p>
+Attempt to resume the <code>Coroutine</code> provided. A <code>Coroutine</code> can be resumed only if
+it is currently in the &#39;waiting&#39; state.</p>
+<p>This function includes a value for the <code>Coroutine</code> to store. The value is stored
+only if the <code>Coroutine</code> is resumed. If stored, the old value is ejected from the
+<code>Coroutine</code> provided.</p>
+<p>If the <code>Coroutine</code> is suspended and yields (or returns) a value, the result is
+a <code>Some</code> of that value.</p>
+<p>Otherwise, this returns <code>None</code>.</p></div>
+<h3 id='method.yield'><code>define <a href='#method.yield'>yield</a>(value: A)</code></h3>
+<div class='doc'><p>
+Yield &#39;value&#39; from the <code>Coroutine</code> given. Control returns to whatever invoked
+&#39;self&#39;.</p>
+<p># Errors:</p>
+<ul>
+<li><code>RuntimeError</code> if <code>self</code> is the current <code>Coroutine</code>, or within a foreign call.</li>
+</ul></div>
+        </div>
+    </div>
+</div>
+        <script src="../../js/jquery.min.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
+        <script src="../../js/docs.min.js"></script>
+    </body>
+</html>

@@ -46,6 +46,14 @@ values embedded within it. It may also have data that is not valid as utf-8.
 The <code>ByteString</code> class currently does not support any primitive operations.</td>
 </tr>
 <tr>
+<td><a class='reflink' href='builtin.Coroutine.html'>Coroutine</a></td>
+<td>
+A <code>Coroutine</code> is similar to a <code>Function</code>, except that it can also yield values
+at different points along its lifetime. Every <code>Coroutine</code> has a callstack that
+belongs to it, as well as an exception state. A <code>Coroutine</code>&#39;s status can be
+discovered by one of the is_ methods.</td>
+</tr>
+<tr>
 <td><a class='reflink' href='builtin.Double.html'>Double</a></td>
 <td>
 The <code>Double</code> class exists as a wrapper over a C double.</td>
