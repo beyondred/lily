@@ -37,14 +37,20 @@ more interesting type if a more bidirectional kind of messaging is wanted. A
 <code>Coroutine</code> itself. If the <code>Function</code> specifies extra arguments, those arguments
 are to be passed to the intermediate result of <code>Coroutine.create</code>.</p></div>
 <h2>Methods</h2>
-<h3 id='function.create'><code>define <a href='#function.create'>create</a>(fn: Function(Coroutine[A, B], $1)): Function($1 => Coroutine[A, B]) <i>static</i></code></h3>
+<h3 id='function.build'><code>define <a href='#function.build'>build</a>(fn: Function(Coroutine[A, B])): Coroutine[A, B] <i>static</i></code></h3>
 <div class='doc'><p>
-This function is the entry point for creating a new <code>Coroutine</code>. &#39;fn&#39; is a
-<code>Function</code> that takes a <code>Coroutine</code> as a first argument, plus any number of
-extra arguments.</p>
-<p>The result of this function is an intermediate builder <code>Function</code>. The builder
-takes the extra arguments to &#39;fn&#39; and creates the <code>Coroutine</code> value.</p>
-<div class='linkblock' id='errors.function.create'><a href='#errors.function.create'>Errors</a></div>
+Build a new <code>Coroutine</code> that wraps over the <code>Function</code> provided.</p>
+<div class='linkblock' id='errors.function.build'><a href='#errors.function.build'>Errors</a></div>
+<ul>
+<li><code>RuntimeError</code>: If &#39;fn&#39; is not a native function.</li>
+</ul></div>
+<h3 id='function.build_with_value'><code>define <a href='#function.build_with_value'>build_with_value</a>(fn: Function(Coroutine[A, B], C), value: C): Coroutine[A, B] <i>static</i></code></h3>
+<div class='doc'><p>
+Build a new Coroutine that wraps over the <code>Function</code> provided. The base
+<code>Function</code> has the second argument set to &#39;value&#39; exactly once before any
+resumption takes place. This method is provided so that a <code>Coroutine</code> can take
+an extra value (perhaps a <code>Tuple</code>) without needing to be a closure.</p>
+<div class='linkblock' id='errors.function.build_with_value'><a href='#errors.function.build_with_value'>Errors</a></div>
 <ul>
 <li><code>RuntimeError</code>: If &#39;fn&#39; is not a native function.</li>
 </ul></div>
