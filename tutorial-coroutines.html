@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Coroutines - Lily</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+        <link href="css/docstyle.css" rel="stylesheet">
+
+        <script src="js/ie-emulation-modes-warning.js"></script>
+    </head>
+
+    <body role="document">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar-nav">
+                <div class="well">
+                    <ul class="nav">
+<li class="nav-header">Intro</li>
+<li><a href="index.html">Welcome</a></li>
+<li><a href="intro-sandbox.html">Sandbox</a></li>
+<li class="nav-header">Tutorial</li>
+<li><a href="tutorial-install.html">Install</a></li>
+<li><a href="tutorial-basics.html">Basics</a></li>
+<li><a href="tutorial-functions.html">Functions</a></li>
+<li><a href="tutorial-classes.html">Classes</a></li>
+<li><a href="tutorial-exceptions.html">Exceptions</a></li>
+<li><a href="tutorial-generics.html">Generics</a></li>
+<li><a href="tutorial-enums.html">Enums</a></li>
+<li><a href="tutorial-import.html">Import</a></li>
+<li class="nav-header">Tools</li>
+<li><a href="tooling-bindgen.html">Bindgen</a></li>
+<li><a href="tooling-docgen.html">Docgen</a></li>
+<li class="nav-header">Reference</li>
+<li><a href="api/index.html">lily.h api</a></li>
+<li><a href="core/module.core.html">Modules</a></li>
+<li class="nav-header">Source</li>
+<li><a href="https://github.com/FascinatedBox/lily">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <p>A typical <code>Function</code> runs and returns a single value at the end of execution.
+The main feature of a <code>Coroutine</code> is that it can yield values at different
+points along its execution. Another advantage of a <code>Coroutine</code> is that it has an
+execution stack that belongs to it.</p>
+<h3 id='creation'>Creation</h3>
+<p>The simplest kind of <code>Coroutine</code> yields <code>Integer</code>, doesn't need any messages,
+and doesn't take extra arguments:</p>
+<pre><code>define one_to_ten(co: Coroutine[Integer, Unit])
+{
+    for i in 1...10:
+        co.yield(i)
+}
+
+var co = Coroutine.build(one_to_ten)
+
+co.resume() |&gt; print # Some(1)
+co.resume() |&gt; print # Some(2)
+co.resume() |&gt; print # Some(3)
+co.resume() |&gt; print # Some(4)
+co.resume() |&gt; print # Some(5)
+co.resume() |&gt; print # Some(6)
+co.resume() |&gt; print # Some(7)
+co.resume() |&gt; print # Some(8)
+co.resume() |&gt; print # Some(9)
+co.resume() |&gt; print # Some(9)
+co.resume() |&gt; print # Some(10)
+co.resume() |&gt; print # None
+</code></pre>
+
+<p>For a <code>Function</code> to be eligible to be the base of a <code>Coroutine</code>, it needs to
+take a <code>Coroutine</code> value as a first parameter. This allows Lily to make sure
+that only the proper type of a value is yielded back. Another advantage to this
+design is that there are no new keywords imposed by supporting coroutines.</p>
+<p>The type of the <code>Coroutine</code> tells what it is able to do. The first type is what
+type it can yield, and the second is what kind of type it can be resumed with.
+In the above example, the <code>Coroutine</code> doesn't need to be resumed with any value,
+so the resumption type is <code>Unit</code> and <code>Coroutine.resume</code> is used.</p>
+<p>Since yield requires the currently-running <code>Coroutine</code>, functions called by the
+base of a coroutine cannot yield unless they have that value. It is therefore
+possible to use the type system to determine what functions may yield, and what
+ones may not.</p>
+<p>Because of how coroutine values are initialized, they can be chained:</p>
+<pre><code>define count_three_times(co: Coroutine[Integer, Unit])
+{
+    one_to_ten(co)
+    one_to_ten(co)
+    one_to_ten(co)
+}
+</code></pre>
+
+<p>The above function works regardless of if <code>count_three_times</code> is sent to
+<code>Coroutine.build</code>, or was called from some other coroutine. What matters is
+that they have the same contract (same yield type, same message type).</p>
+<h3 id='caveats'>Caveats</h3>
+<p>Exceptions stay within their originating coroutine:</p>
+<pre><code>define error(co: Coroutine[Integer, Unit])
+{
+    co.yield(0 / 0)
+}
+
+Coroutine.build(error).resume() |&gt; print # None
+</code></pre>
+
+<p>Returns from the base <code>Function</code> are ignored:</p>
+<pre><code>define noop(co: Coroutine[Integer, Unit]): Integer { return 10 }
+
+Coroutine.build(noop).resume() |&gt; print # None
+</code></pre>
+
+<p><code>Coroutine.yield</code> requires the coroutine value that is currently running.</p>
+<p><code>Coroutine.yield</code> works through any number of native calls, but not through a
+foreign call. Typical examples are 'select', 'map', etc. Attempting to yield
+while in a foreign call will result in the resumer getting <code>None</code> since an
+exception is raised.</p>
+<pre><code>define invalid_yield_each(co: Coroutine[Integer, Unit])
+{
+    [1, 2, 3].each(|e|
+        co.yield(e)
+    )
+}
+
+Coroutine.build(invalid_yield_each).resume() |&gt; print # None
+</code></pre>
+
+<p><code>Coroutine.receive</code> only works when the source coroutine is the currently
+executing one (not just executing, but also the current one).</p>
+<h3 id='states'>States</h3>
+<p>A <code>Coroutine</code> can be in one of exactly four different states:</p>
+<ul>
+<li>
+<p><code>done</code>: The base function is done.</p>
+</li>
+<li>
+<p><code>failed</code>: An exception was raised.</p>
+</li>
+<li>
+<p><code>waiting</code>: Waiting to be resumed.</p>
+</li>
+<li>
+<p><code>running</code>: Currently executing code.</p>
+</li>
+</ul>
+<p>Note that a coroutine can be running, but not be the currently running
+coroutine, such as in a case where 2 or more are currently be resumed.</p>
+<h3 id='arguments'>Arguments</h3>
+<p>Sometimes there's a reason for a coroutine to take another value:</p>
+<pre><code>define yield_list(co: Coroutine[Integer, Unit], source: List[Integer])
+{
+    for i in 0...source.size() - 1:
+        source[i] |&gt; co.yield
+}
+
+var co = Coroutine.build_with_value(yield_list, [1, 2, 3])
+
+co.resume() |&gt; print # Some(1)
+co.resume() |&gt; print # Some(2)
+co.resume() |&gt; print # Some(3)
+co.resume() |&gt; print # None
+</code></pre>
+
+<p><code>Coroutine.build_with_value</code> allows sending in an extra argument. If 2+
+arguments are needed, consider sending a <code>Tuple</code> (and having the caller unpack
+it).</p>
+<pre><code>define range(co: Coroutine[Integer, Unit], start_end: Tuple[Integer, Integer])
+{
+    var start = start_end[0]
+    var end = start_end[1]
+
+    if start &lt; end:
+        for i in start...end:
+            co.yield(i)
+}
+
+var co = Coroutine.build(range, &lt;[1, 3]&gt;)
+
+co.resume() |&gt; print # Some(1)
+co.resume() |&gt; print # Some(2)
+co.resume() |&gt; print # Some(3)
+</code></pre>
+
+<p>Alternatively, the caller may want to use a closure:</p>
+<pre><code>define range_cl(:start start: Integer,
+                :end end: Integer)
+{
+    define range_fn(co: Coroutine[Integer, Unit]) {
+        if start &lt; end:
+            for i in start...end:
+                co.yield(i)
+    }
+
+    return range_fn
+}
+
+var co = range_cl(:start 1, :end 3) |&gt; Coroutine.create
+
+co.resume() |&gt; print # Some(1)
+co.resume() |&gt; print # Some(2)
+co.resume() |&gt; print # Some(3)
+co.resume() |&gt; print # None
+</code></pre>
+
+<h3 id='messages'>Messages</h3>
+<p>It's possible to have a coroutine that receives messages in addition to yielding
+values:</p>
+<pre><code>define adder(co: Coroutine[Integer, Integer], source: List[Integer])
+{
+    for i in 0...source.size() - 1:
+        co.yield(co.receive() + source[i])
+}
+
+var co = Coroutine.build_with_value(adder, [1, 2, 3])
+
+co.resume_with(10) |&gt; print # Some(11)
+co.resume_with(200) |&gt; print # Some(202)
+co.resume_with(3003) |&gt; print # Some(3003)
+</code></pre>
+
+<p>A coroutine eligible for messages (second type being non-<code>Unit</code>) is resumed with
+<code>Coroutine.resume_with</code>, and must pass a value each time.</p>
+<p>On the other end, the coroutine can fetch the value it was sent using
+<code>Coroutine.receive</code>. Receiving a value does not consume it or alter it, so a
+coroutine is permitted to call receive as many times as it wishes.</p>
+        </div>
+    </div>
+</div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/docs.min.js"></script>
+    </body>
+</html>
