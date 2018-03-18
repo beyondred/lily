@@ -59,6 +59,12 @@ This calls <code>fn</code> for each element present within <code>self</code>. Th
 value as it accumulates can be found in the first value sent to <code>fn</code>.</p>
 <p>The result of this function is the result of doing an accumulation on each
 element within <code>self</code>.</p></div>
+<h3 id='function.fill'><code>define <a href='#function.fill'>fill</a>(count: Integer, fn: Function(Integer => A)): List[A] <i>static</i></code></h3>
+<div class='doc'><p>
+Generate a <code>List</code> of &#39;count&#39; items using &#39;fn&#39;.</p>
+<p>This calls &#39;fn&#39; with an index that starts at <code>0</code> and proceeds until &#39;count&#39;, and
+does not include &#39;count&#39;.</p>
+<p>If &#39;count&#39; is <code>0</code> or negative, then the resulting <code>List</code> will be empty.</p></div>
 <h3 id='method.get'><code>define <a href='#method.get'>get</a>(index: Integer): Option[A]</code></h3>
 <div class='doc'><p>
 Attempt to find <code>index</code> within <code>self</code>.</p>
@@ -129,6 +135,15 @@ with <code>-1</code> being considered the last element.</p>
 <h3 id='method.unshift'><code>define <a href='#method.unshift'>unshift</a>(value: A)</code></h3>
 <div class='doc'><p>
 Inserts value at the front of self, moving all other elements to the right.</p></div>
+<h3 id='method.zip'><code>define <a href='#method.zip'>zip</a>(others: List[$1]...): List[Tuple[A, $1]]</code></h3>
+<div class='doc'><p>
+This creates a <code>List</code> that contains a merger of the values within each of the
+elements in &#39;others&#39; and &#39;self&#39;.</p>
+<p>The <code>$1</code> type is a special type that allows this method to work with any number
+of <code>List</code> values.</p>
+<p>If &#39;self&#39; is <code>List[Integer]</code> and &#39;others&#39; is <code>List[String]</code> and <code>List[Double]</code>,
+then the resulting type is <code>List[Tuple[Integer, String, Double]]</code>.</p>
+<p>The size of the result <code>List</code> is the same as the smallest <code>List</code> provided.</p></div>
         </div>
     </div>
 </div>
