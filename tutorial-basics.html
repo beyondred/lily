@@ -276,11 +276,15 @@ result is a <code>Double</code> if either side is a <code>Double</code>, <code>I
 valid if both sides are <code>Integer</code>.</p>
 <p>Comparison operations (<code>&gt;= &gt; &lt; &lt;=</code>) are allowed on any two sets of <code>Integer</code>,
 <code>String</code>, or <code>Double</code>.</p>
-<p>Equality operations (<code>== !=</code>) are allowed on any two equivalent types. <code>List</code>,
-<code>Hash</code>, <code>Tuple</code>, and variants have their members compared against each other,
-so that <code>[1] == [1]</code> is <code>true</code>. All other classes (aside from primitives) go
-through reference (pointer) comparison so that <code>Dynamic(1) == Dynamic(1)</code> is
-<code>false</code>.</p>
+<h3 id='comparison'>Comparison</h3>
+<p>Equality operations (<code>== !=</code>) are allowed on any two equivalent types.</p>
+<p>Simple values like <code>Integer</code>, and <code>Double</code> are straightforward: They are equal
+only when they are the same value.</p>
+<p><code>List</code>, <code>Tuple</code>, <code>Hash</code>, and variants use structural comparison. Since <code>List</code>
+uses structural comparison, <code>[1] == [1]</code> will always return <code>true</code>.</p>
+<p>All other containers and more interesting types use identity comparison.
+A comparison such as <code>Point2D(2, 4) == Point2D(2, 4)</code> will always return
+<code>false</code>, since each <code>Point2D</code> is a different instance.</p>
 <h3 id='interpolation'>Interpolation</h3>
 <p>The <code>++</code> operator, <code>String.format</code>, and <code>print</code> all make use of built-in
 interpolation. Interpolation works as follows:</p>
