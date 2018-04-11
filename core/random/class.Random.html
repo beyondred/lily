@@ -22,8 +22,9 @@
         <div class="col-md-9">
             <h1>Class Random</h1>
 <pre>(foreign) class Random {
-    unsigned long long mt[NN];
-    int mti;
+    uint32_t state[MTWIST_N];
+    uint32_t *next;
+    int remaining;
 }</pre>
 <div class='doc'><p>
 The <code>Random</code> class provides access to the random number generator. Each

@@ -40,6 +40,13 @@ Read each line of text from <code>self</code>, passing it down to <code>fn</code
 <ul>
 <li><code>IOError</code> if <code>self</code> is not open for reading, or is closed.</li>
 </ul></div>
+<h3 id='method.flush'><code>define <a href='#method.flush'>flush</a></code></h3>
+<div class='doc'><p>
+This function writes all buffered data associated with the <code>File</code> provided.</p>
+<div class='linkblock' id='errors.method.flush'><a href='#errors.method.flush'>Errors</a></div>
+<ul>
+<li><code>IOError</code> if <code>self</code> is closed or not open for writing.</li>
+</ul></div>
 <h3 id='function.open'><code>define <a href='#function.open'>open</a>(path: String, mode: String): File <i>static</i></code></h3>
 <div class='doc'><p>
 Attempt to open <code>path</code> using the <code>mode</code> given. <code>mode</code> may be one of the
