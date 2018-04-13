@@ -59,16 +59,6 @@ discovered by one of the is_ methods.</td>
 The <code>Double</code> class exists as a wrapper over a C double.</td>
 </tr>
 <tr>
-<td><a class='reflink' href='builtin.Dynamic.html'>Dynamic</a></td>
-<td>
-The <code>Dynamic</code> class allows defering type checking until runtime. Creation of
-<code>Dynamic</code> is done through <code>Dynamic(&lt;value&gt;)</code>. Extraction of values is done
-through a cast: <code>.@(type)</code>. The result of a cast is <code>Option[&lt;type&gt;]</code>, with
-<code>Some</code> on success and <code>None</code> on failure. Finally, casts are not allowed to hold
-polymorphic types, such as <code>List</code> or <code>Hash</code> or <code>Function</code>, because Lily&#39;s vm
-only holds class information at runtime.</td>
-</tr>
-<tr>
 <td><a class='reflink' href='builtin.File.html'>File</a></td>
 <td>
 The <code>File</code> class provides a wrapper over a C FILE * struct. A <code>File</code> is closed
