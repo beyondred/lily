@@ -267,8 +267,9 @@ define optarg_sum(a: Integer,
 {
     var total = a + b
 
-    for i in 0...args.size() - 1:
+    for i in 0...args.size() - 1: {
         total += args[i]
+    }
 
     print(total)
     return total

@@ -54,10 +54,10 @@
 <p>The condition passed to a block ends with <code>:</code></p>
 </li>
 <li>
-<p>By default, blocks allow a single expression.</p>
+<p>The entire block must be enclosed in braces (instead of just the branches).</p>
 </li>
 <li>
-<p>For multiple expressions, the entire block must be in braces</p>
+<p>All blocks are required to have braces.</p>
 </li>
 </ul>
 <p>In practice, it looks like this:</p>
@@ -77,6 +77,8 @@ unambiguous.</p>
 <p>The style of using one brace for all branches was chosen to lessen the potential
 of dangling curly braces when adjusting branch arms to support multiple
 expressions.</p>
+<p>All blocks are required to have braces to make their starting and ending points
+unambiguous.</p>
 <h3 id='truthiness'>Truthiness</h3>
 <p>Lily allows several non-<code>Boolean</code> values to be checked for truthiness. Here are
 the different types and what Lily considers false for them.</p>
@@ -134,8 +136,9 @@ simple single-line set of if's.</p>
 <p>Execute expression(s) while within a given range.</p>
 <pre><code>var items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
 
-for i in 0...items.size() - 1:
+for i in 0...items.size() - 1: {
     print(&quot;Item {0} is {1}.&quot;.format(i, items[i]))
+}
 
 # Result:
 # Item 0 is a.
@@ -154,8 +157,9 @@ increment is or evaluates to <code>0</code>, an exception will be raised.</p>
 of the type <code>Integer</code>.</p>
 <pre><code>var items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
 
-for i in items.size() - 1...0 by -1:
+for i in items.size() - 1...0 by -1: {
     print(&quot;Item {0} is {1}.&quot;.format(i, items[i]))
+}
 
 # Result:
 # Item 2 is c.
@@ -174,8 +178,9 @@ define return_counter: Integer {
     return out
 }
 
-for i in 0...return_counter():
+for i in 0...return_counter(): {
     print(&quot;i is {0}&quot;.format(i))
+}
 
 # Result:
 # i is 0
@@ -205,9 +210,9 @@ print(i_values)
 <p>Similar to <code>while</code>, except that the body is always executed at least once:</p>
 <pre><code>var i = 1
 
-do:
+do: {
     print(i)
-while i != 1
+} while i != 1
 </code></pre>
 
 <p><code>do</code> supports both <code>break</code> and <code>continue</code> for flow control.</p>
@@ -218,10 +223,11 @@ have been skipped over by one of the above mentioned flow control keywords.</p>
 <p>Execute expression(s) while trapping for exceptions.</p>
 <p>A <code>try</code> block attempts to execute expression(s) within the <code>try</code> section. If any
 expression raises an exception, the <code>except</code> branches are tested.</p>
-<pre><code>try:
+<pre><code>try: {
     1 / 0
 except DivisionByZeroError:
     print(&quot;Can't divide by zero.&quot;)
+}
 </code></pre>
 
 <p>Similar to <code>if</code>, braces go around the entire block after the <code>try</code>'s colon:</p>
@@ -235,12 +241,13 @@ except DivisionByZeroError:
 
 <p>Exception capture tests <code>except</code> blocks starting from the first one specified to
 the last. Furthermore, capture can specify an underlying class to trap:</p>
-<pre><code>try:
+<pre><code>try: {
     raise ValueError(&quot;!!!&quot;)
 except Exception:
     print(&quot;This will be seen.&quot;)
 except ValueError:
     print(&quot;This is not possible.&quot;)
+}
 
 # Result:
 # This will be seen.
@@ -255,10 +262,11 @@ declared. The base <code>Exception</code> class provides the properties <code>tr
 <code>message</code>.</p>
 <pre><code>class MyError(message: String, var @code: Integer) &lt; Exception(message) {}
 
-try:
+try: {
     raise MyError(&quot;Oh no&quot;, 100)
 except MyError as e:
     print(&quot;Caught custom error with code {0}, message '{1}'.&quot;.format(e.code, e.message))
+}
 
 # Result:
 # Caught custom error with code 100, message 'Oh no'.

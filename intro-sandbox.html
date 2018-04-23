@@ -29,16 +29,19 @@ print("Hello World!")
 <div class="example" id="100 doors">
 var doors = List.repeat(100, false)
 
-for i in 0...99:
-    for j in i...99 by i + 1:
+for i in 0...99: {
+    for j in i...99 by i + 1: {
         doors[j] = !doors[j]
+    }
+}
 
 # The type must be specified since the List starts off empty.
 var open_doors: List[Integer] = []
 
 doors.each_index(|i|
-    if doors[i]:
+    if doors[i]: {
         open_doors.push(i + 1)
+    }
 )
 
 print("Open doors: {0}.".format(open_doors))
@@ -59,8 +62,9 @@ enum TreeObject {
 
                 for i in 0...size: {
                     result = "{0}{1}".format(result, l[i].as_string())
-                    if i != size:
+                    if i != size: {
                         result = result ++ " "
+                    }
                 }
 
                 return result ++ "]"
@@ -102,8 +106,9 @@ define rpn(input: String): Result[String, List[Integer]]
             case Some(number):
                 stack.push(number)
             case None:
-                if stack.size() &lt; 2:
+                if stack.size() &lt; 2: {
                     return Failure("Stack underflow.")
+                }
 
                 var right = stack.pop()
                 var left = stack.pop()
@@ -151,8 +156,9 @@ var last_round = 0
 
 for i in 1...task_count: {
     var rng = r.between(1, max)
-    if rng &gt; last_round:
+    if rng &gt; last_round: {
         last_round = rng
+    }
 
     rng_list.push(rng)
     id_list.push(i)
@@ -197,8 +203,9 @@ while num_left: {
     }
 
     round += 1
-    if round == last_round:
+    if round == last_round: {
         break
+    }
 
     print("")
 }

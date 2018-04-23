@@ -57,8 +57,9 @@ execution stack that belongs to it.</p>
 and doesn't take extra arguments:</p>
 <pre><code>define one_to_ten(co: Coroutine[Integer, Unit])
 {
-    for i in 1...10:
+    for i in 1...10: {
         co.yield(i)
+    }
 }
 
 var co = Coroutine.build(one_to_ten)
@@ -193,9 +194,11 @@ co.resume() |&gt; print # Some(3)
                 :end end: Integer)
 {
     define range_fn(co: Coroutine[Integer, Unit]) {
-        if start &lt; end:
-            for i in start...end:
+        if start &lt; end: {
+            for i in start...end: {
                 co.yield(i)
+            }
+        }
     }
 
     return range_fn
@@ -214,8 +217,9 @@ co.resume() |&gt; print # None
 values:</p>
 <pre><code>define adder(co: Coroutine[Integer, Integer], source: List[Integer])
 {
-    for i in 0...source.size() - 1:
+    for i in 0...source.size() - 1: {
         co.yield(co.receive() + source[i])
+    }
 }
 
 var co = Coroutine.build_with_value(adder, [1, 2, 3])
